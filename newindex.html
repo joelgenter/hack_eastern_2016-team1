@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Test Dots</title>
+        <script type="text/javascript">
+            function init() {
+                var renderStack = [],
+                    canvas = document.getElementById("canvas"),
+                    ctx = canvas.getContext("2d"),
+                    mouse = {},
+                    keysDown = {},
+                    then = Date.now();
+                    player = {
+                        speed: 256, // movement in pixels per second
+                    	x: 0,
+                    	y: 0
+                    },
+                    otherPlayers = {};
+
+                // Render this player
+                renderStack.push(function() {
+                    ctx.beginPath();
+                    ctx.arc(player.x, player.y, 50, 0, 2 * Math.PI);
+                    ctx.fillStyle = "#0000FF";
+                    ctx.fill();
+                    ctx.stroke();
+                });
+
+                // Render other players
+                renderStack.push(function() {
+                    for (var i = 0; i < otherPlayers.length; i++) {
+                    ctx.beginPath();
+                    ctx.arc(otherPlayers[i].x, otherPlayers[i].y, 50, 0, 2 * Math.PI);
+                    ctx.fillStyle = "#FF0000";
+                    ctx.fill();
+                    ctx.stroke();
+                    }
+
+                });
+
+                function getMousePos(canvas, evt) {
+                    mouse.x = evt.clientX;
+                    mouse.y = evt.clientY;
+                }
+
+                addEventListener("keydown", function (e) {
+                	keysDown[e.keyCode] = true;
+                });
+
+                addEventListener("keyup", function (e) {
+                	delete keysDown[e.keyCode];
+                });
+
+                // Update game objects
+                function update (modifier) {
+                	if (38 in keysDown) { // Player holding up
+                		player.y -= player.speed * modifier;
+                	}
+                	if (40 in keysDown) { // Player holding down
+                		player.y += player.speed * modifier;
+                	}
+                	if (37 in keysDown) { // Player holding left
+                		player.x -= player.speed * modifier;
+                	}
+                	if (39 in keysDown) { // Player holding right
+                		player.x += player.speed * modifier;
+                	}
+                };
+
+                function render (stack) {
+                    clear(ctx,"#eee");
+                    for (var i = 0; i < stack.length; i++) {
+                        stack[i]();
+                    }
+                }
+
+                function clear(context, color) {
+                    var tmp = context.fillStyle;
+                    context.fillStyle = color;
+                    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+                    context.fillStyle = tmp;
+                }
+
+                // TODO: update otherPlayers
+                var main = function () {
+                	var now = Date.now();
+                	var delta = now - then;
+
+                	update(delta / 1000);
+                	render(renderStack);
+
+                	then = now;
+
+                	requestAnimationFrame(main);
+                };
+
+                main();
+
+            }
+        </script>
+    </head>
+    <body onload="init();">
+        <canvas id="canvas" width="500" height="500"></canvas>
+
+    </body>
+</html>

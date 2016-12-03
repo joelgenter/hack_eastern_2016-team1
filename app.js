@@ -24,6 +24,7 @@ io.on('connection', function(player) {
 		var player = PLAYER_LIST[i];
 	}
 
+
 	player.on('sendText', function(data) {
 		for (var i in PLAYER_LIST) {
 			var player = PLAYER_LIST[i];
@@ -32,6 +33,9 @@ io.on('connection', function(player) {
 		}
 	});
 
+	player.on('disconnect', function() {
+		delete PLAYER_LIST[player.id];
+	});
 /*
 	player.on('increment', function(dataObjectFromClient) {
 		dataObjectFromClient.theValue++;
@@ -40,15 +44,15 @@ io.on('connection', function(player) {
 	*/
 });
 
-// setInterval(function() {
-// 	for (var i in PLAYER_LIST) {
-// 		var player = PLAYER_LIST[i];
-// 		player.x++;
-// 		player.y++;
-// 		player.emit('newPosition', {
-// 			x: player.x,
-// 			y: player.y
-// 		});
-// 	}
-// }, 1000/25);
+setInterval(function() {
+	for (var i in PLAYER_LIST) {
+		var player = PLAYER_LIST[i];
+		player.x++;
+		player.y++;
+		player.emit('newPosition', {
+			x: player.x,
+			y: player.y
+		});
+	}
+}, 1000/25);
 

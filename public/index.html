@@ -7,9 +7,6 @@
 <div id="textStorage"></div>
 
 <script>
-
-
-
     var socket = io();
 
     var textInput = document.getElementById('textInput');
@@ -22,13 +19,10 @@
     }
 
     socket.on('newText', function(data) {
-        alert(data.text);
         textStorage.innerHTML += "<br>" + data.text;
     });
 
     socket.on('newPosition');
-
-
 
 
 /*

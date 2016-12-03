@@ -22,7 +22,8 @@
     }
 
     socket.on('newText', function(data) {
-        textStorage.html += "<br>" + data.text;
+        alert(data.text);
+        textStorage.innerHTML += "<br>" + data.text;
     });
 
     socket.on('newPosition');

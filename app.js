@@ -18,12 +18,17 @@ io.on('connection', function(player) {
 	player.y = 0;
 	PLAYER_LIST[player.id] = player;
 
-    console.log('User connected');
+    console.log('User ' + player.id + ' connected');
+
+	for (var i in PLAYER_LIST) {
+		var player = PLAYER_LIST[i];
+	}
 
 	player.on('sendText', function(data) {
 		for (var i in PLAYER_LIST) {
 			var player = PLAYER_LIST[i];
 			player.emit('newText', data);
+			console.log('made it this far');
 		}
 	});
 

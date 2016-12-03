@@ -12,7 +12,7 @@
     socket.emit('increment', dataObject)
 
     socket.on('serverHasResponded', function(dataObjectFromServer) {
-        alert(dataObjectReceived.theValue);
+        alert(dataObjectFromServer.theValue);
     });
 
 

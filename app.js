@@ -10,27 +10,40 @@ var server = app.listen(port, function(){
 
 var io = require('socket.io')(server);
 
-io.on('connection', function(socket) {
+var PLAYER_LIST = {};
+
+io.on('connection', function(player) {
+	player.id = Math.random();
+	player.x = 0;
+	player.y = 0;
+	PLAYER_LIST[player.id] = player;
+
     console.log('User connected');
 
-	socket.on('increment', function(dataObjectFromClient) {
-		dataObjectFromClient.theValue++;
-		socket.emit('serverHasResponded', dataObjectFromClient);
+	player.on('sendText', function(data) {
+		for (var i in PLAYER_LIST) {
+			var player = PLAYER_LIST[i];
+			player.emit('newText', data);
+		}
 	});
+
+/*
+	player.on('increment', function(dataObjectFromClient) {
+		dataObjectFromClient.theValue++;
+		player.emit('serverHasResponded', dataObjectFromClient);
+	});
+	*/
 });
 
+// setInterval(function() {
+// 	for (var i in PLAYER_LIST) {
+// 		var player = PLAYER_LIST[i];
+// 		player.x++;
+// 		player.y++;
+// 		player.emit('newPosition', {
+// 			x: player.x,
+// 			y: player.y
+// 		});
+// 	}
+// }, 1000/25);
 
-
-
-
-
-
-    // socket.on('joinGame', function(tank){
-    //     console.log(tank.id + ' joined the game');
-    //     var initX = getRandomInt(40, 900);
-    //     var initY = getRandomInt(40, 500);
-    //     socket.emit('addTank', { id: tank.id, type: tank.type, isLocal: true, x: initX, y: initY, hp: TANK_INIT_HP });
-    //     socket.broadcast.emit('addTank', { id: tank.id, type: tank.type, isLocal: false, x: initX, y: initY, hp: TANK_INIT_HP} );
-
-    //     game.addTank({ id: tank.id, type: tank.type, hp: TANK_INIT_HP});
-    // });

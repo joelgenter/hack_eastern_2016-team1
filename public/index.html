@@ -2,18 +2,44 @@
 
 <p>The page has loaded.. at least</p>
 
+<input id="textInput" type="text" name="text">
+<button onClick="sendText()">send text</button>
+<div id="textStorage"></div>
+
 <script>
+
+
+
     var socket = io();
 
-    dataObject = {
-        theValue: 5
-    };
+    var textInput = document.getElementById('textInput');
+    var textStorage = document.getElementById('textStorage');
+    
+    function sendText() {
+        socket.emit('sendText', {
+            text: textInput.value
+        });
+    }
 
-    socket.emit('increment', dataObject)
-
-    socket.on('serverHasResponded', function(dataObjectFromServer) {
-        alert(dataObjectFromServer.theValue);
+    socket.on('newText', function(data) {
+        textStorage.html += "<br>" + data.text;
     });
 
+    socket.on('newPosition');
+
+
+
+
+/*
+    // dataObject = {
+    //     theValue: 5
+    // };
+
+    // socket.emit('increment', dataObject)
+
+    // socket.on('serverHasResponded', function(dataObjectFromServer) {
+    //     alert(dataObjectFromServer.theValue);
+    // });
+    */
 
 </script>

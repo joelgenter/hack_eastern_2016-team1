@@ -11,37 +11,30 @@
                     ctx = canvas.getContext("2d"),
                     mouse = {},
                     keysDown = {},
-                    then = Date.now();
-                    player = {
-                        mouse: {
-                            x: 0,
-                            y: 0
+                    playerId,
+                    then = Date.now(),
+                    players = {
+                        P2123: {
+                            x: 23,
+                            y: 45,
+                            id: 3452,
+                            mousex: 99,
+                            mousey: 102
                         },
-
-                        speed: 256, // movement in pixels per second
-                    	x: 0,
-                    	y: 0
-                    },
-                    otherPlayers = {
-                        player1: {
-                            x: 300,
-                            y: 200,
-                            mouse: {
-                                x: 20,
-                                y: 34
-                            }
-                        }
                     };
-
                 var socket = io();
 
+                socket.on('initializePlayer', function(data) {
+                    playerId = data.id;
+                    players[playerId] = data;
+                })
+
                 socket.on('receivePlayer', function(playerObj) {
-                    renderStack.push(playerObj);
+                    players[playerObj.id] = playerObj;
                  });
 
                 addEventListener("mousemove", function (event) {
                     var mousePos = getMousePos(ctx, event);
-                    console.log(player.mouse.x + " : " + player.mouse.y);
                 });
 
                 // Render this player
@@ -103,7 +96,7 @@
                 function clear(context, color) {
                     var tmp = context.fillStyle;
                     context.fillStyle = color;
-                    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+                    context.fillRect(1, 0, context.canvas.width, context.canvas.height);
                     context.fillStyle = tmp;
                 }
 

@@ -1,25 +1,16 @@
 {
-  "name": "hack_eastern_2016-team1",
-  "version": "1.0.0",
+  "name": "static",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/joelgenter/hack_eastern_2016-team1.git"
-  },
+  "repository": "",
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/joelgenter/hack_eastern_2016-team1/issues"
-  },
-  "homepage": "https://github.com/joelgenter/hack_eastern_2016-team1#readme",
+  "license": "BSD",
+  "gitHead": "149ba936713855fd1c3b02d0fb7439e97d665c71",
   "dependencies": {
-    "ejs": "^2.5.3",
-    "express": "^4.14.0",
-    "socket.io": "^1.7.1"
+    "express": "~3.4.7"
   }
 }

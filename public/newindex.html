@@ -38,28 +38,11 @@
                 });
 
                 // Render this player
-                renderStack.push(function() {
-                    ctx.beginPath();
-                    ctx.arc(player.x, player.y, 50, 0, 2 * Math.PI);
-                    ctx.fillStyle = "#0000FF";
-                    ctx.fill();
-                    ctx.stroke();
-                });
-
-                // TODO:  fix this Render other players
-                renderStack.push(function() {
-                    for (var i = 0; i < otherPlayers.length; i++) {
-                    ctx.beginPath();
-                    ctx.arc(otherPlayers[i].x, otherPlayers[i].y, 50, 0, 2 * Math.PI);
-                    ctx.fillStyle = "#FF0000";
-                    ctx.fill();
-                    ctx.stroke();
-                    }
-                });
+                renderStack.push();
 
                 function getMousePos(canvas, evt) {
-                    player.mouse.x = evt.clientX;
-                    player.mouse.y = evt.clientY;
+                    players[playerId].mousex = evt.clientX;
+                    players[playerId].mousey = evt.clientY;
                 }
 
                 addEventListener("keydown", function (e) {
@@ -73,16 +56,16 @@
                 // Update game objects
                 function update (modifier) {
                 	if (38 in keysDown) { // Player holding up
-                		player.y -= player.speed * modifier;
+                		players[playerId].y -= players[playerId].speed * modifier;
                 	}
                 	if (40 in keysDown) { // Player holding down
-                		player.y += player.speed * modifier;
+                		players[playerId].y += players[playerId].speed * modifier;
                 	}
                 	if (37 in keysDown) { // Player holding left
-                		player.x -= player.speed * modifier;
+                		players[playerId].x -= players[playerId].speed * modifier;
                 	}
                 	if (39 in keysDown) { // Player holding right
-                		player.x += player.speed * modifier;
+                		players[playerId].x += players[playerId].speed * modifier;
                 	}
                 };
 
@@ -102,7 +85,7 @@
 
                 // TODO: update otherPlayers
                 var main = function () {
-                    socket.emit('sendPlayer', player);
+                    socket.emit('sendPlayer', players[playerId]);
                 	var now = Date.now();
                 	var delta = now - then;
 

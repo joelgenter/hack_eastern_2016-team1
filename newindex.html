@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
         <meta charset="utf-8">
         <title>Test Dots</title>
         <script type="text/javascript">
@@ -12,11 +13,36 @@
                     keysDown = {},
                     then = Date.now();
                     player = {
+                        mouse: {
+                            x: 0,
+                            y: 0
+                        },
+
                         speed: 256, // movement in pixels per second
                     	x: 0,
                     	y: 0
                     },
-                    otherPlayers = {};
+                    otherPlayers = {
+                        player1: {
+                            x: 300,
+                            y: 200,
+                            mouse: {
+                                x: 20,
+                                y: 34
+                            }
+                        }
+                    };
+
+                var socket = io();
+
+                socket.on('receivePlayer', function(playerObj) {
+                    renderStack.push(playerObj);
+                 });
+
+                addEventListener("mousemove", function (event) {
+                    var mousePos = getMousePos(ctx, event);
+                    console.log(player.mouse.x + " : " + player.mouse.y);
+                });
 
                 // Render this player
                 renderStack.push(function() {
@@ -27,7 +53,7 @@
                     ctx.stroke();
                 });
 
-                // Render other players
+                // TODO:  fix this Render other players
                 renderStack.push(function() {
                     for (var i = 0; i < otherPlayers.length; i++) {
                     ctx.beginPath();
@@ -36,12 +62,11 @@
                     ctx.fill();
                     ctx.stroke();
                     }
-
                 });
 
                 function getMousePos(canvas, evt) {
-                    mouse.x = evt.clientX;
-                    mouse.y = evt.clientY;
+                    player.mouse.x = evt.clientX;
+                    player.mouse.y = evt.clientY;
                 }
 
                 addEventListener("keydown", function (e) {
@@ -84,6 +109,7 @@
 
                 // TODO: update otherPlayers
                 var main = function () {
+                    socket.emit('sendPlayer', player);
                 	var now = Date.now();
                 	var delta = now - then;
 

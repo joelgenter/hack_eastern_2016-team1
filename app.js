@@ -21,6 +21,12 @@ var SOCKET_LIST = {};
 //represents how far a player will move every time game data is sent
 var playerSpeed = 5;
 var gameIsStarted = false;
+var radiusOfPlayer = 40;
+var radiusOfStartShape = 40;
+var startShape = {
+	x: null,
+	y: null
+};
 
 
 io.on('connection', function(player) {
@@ -57,18 +63,42 @@ io.on('connection', function(player) {
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
 		delete SOCKET_LIST[player.id];
-		console.log('User ' + player.id + ' disconnected');
+		console.log('Player ' + player.id + ' disconnected');
 	});
 });
 
+/*
+* game iteration
+*/
 setInterval(function() {
-	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
+	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
-			currentPlayer.emit('gameShapeCreated', {
+			startShape = {
 				x: Math.floor((Math.random() * 500) + 1),
 				y: Math.floor((Math.random() * 500) + 1)
-			});
+			};
+			currentPlayer.emit('gameShapeCreated', startShape);
+		}
+		gameIsStarted = true;
+	}
+
+	if (gameIsStarted) {
+		for (var i in PLAYER_LIST) {
+			var collisionHappened = false;
+			var currentPlayer = PLAYER_LIST[i];
+			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
+			if (distance <= (radiusOfStartShape + radiusOfPlayer)) {
+				collisionHappened = true;
+				break;
+			}
+		}
+
+		if (collisionHappened) {
+			for (var i in SOCKET_LIST) {
+				var currentPlayer = SOCKET_LIST[i];
+				currentPlayer.emit('startShapeCollision', {});
+			}
 		}
 	}
 

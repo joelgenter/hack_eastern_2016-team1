@@ -143,18 +143,34 @@ setInterval(function() {
 		var currentSocket = SOCKET_LIST[i];
 		var currentPlayer = PLAYER_LIST[currentSocket.id];
 		if (!(currentPlayer.isKiller && countingDown)) {
+			var newLocationValue = PLAYER_LIST[currentPlayer.id].x;
 			if (currentSocket.keysDown[37]) {//37 is left
-				PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
+				newLocationValue -= playerSpeed;
 			}
 			if (currentSocket.keysDown[39]) {//39 is right
-				PLAYER_LIST[currentPlayer.id].x += playerSpeed;
+				newLocationValue += playerSpeed;
 			}
+
+			if (newLocationValue < 0)
+				newLocationValue = newLocationValue + 500;
+			else
+				newLocationValue = newLocationValue % 500;
+			PLAYER_LIST[currentPlayer.id].x = newLocationValue;
+
+			newLocationValue = PLAYER_LIST[currentPlayer.id].y;
 			if (currentSocket.keysDown[38]) {//38 is up
-				PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
+				newLocationValue -= playerSpeed;
 			}
 			if (currentSocket.keysDown[40]) {//40 is down
-				PLAYER_LIST[currentPlayer.id].y += playerSpeed;
+				newLocationValue += playerSpeed;
 			}
+
+			if (newLocationValue < 0)
+				newLocationValue = newLocationValue + 500;
+			else
+				newLocationValue = newLocationValue % 500;
+
+			PLAYER_LIST[currentPlayer.id].y = newLocationValue;
 		}
 	}
 

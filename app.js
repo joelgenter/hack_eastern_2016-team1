@@ -24,11 +24,12 @@ var gameIsStarted = false;
 var radiusOfPlayer = 40;
 var radiusOfStartShape = 40;
 var startShape = {
+	exists: false,
 	x: null,
 	y: null
 };
-var matchStartCountDown;
 var countingDown = false;
+var collisionHappened = false;
 
 
 io.on('connection', function(player) {
@@ -77,6 +78,7 @@ io.on('connection', function(player) {
 setInterval(function() {
 	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
 		startShape = {
+			exists: true,
 			x: Math.floor((Math.random() * 500) + 1),
 			y: Math.floor((Math.random() * 500) + 1)
 		};
@@ -87,9 +89,9 @@ setInterval(function() {
 		gameIsStarted = true;
 	}
 
-	if (gameIsStarted) {
+	//checking for collision
+	if (gameIsStarted && startShape.exists) {
 		for (var i in PLAYER_LIST) {
-			var collisionHappened = false;
 			var currentPlayer = PLAYER_LIST[i];
 			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
@@ -101,28 +103,34 @@ setInterval(function() {
 		}
 
 		if (collisionHappened) {
+			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
 				currentPlayer.emit('startShapeCollision', {});
-				matchStartCountDown = setTimeout(function() {
-					
-				}, 10000);
 				countingDown = true;
 			}
-
+			setTimeout(function() {countingDown = false;}, 10000);
+			collisionHappened = false;
 		}
 	}
 
 	for (var i in SOCKET_LIST) {
-		var currentPlayer = SOCKET_LIST[i];
-		if (currentPlayer.keysDown[37]) //37 is left
-			PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
-		if (currentPlayer.keysDown[39]) //39 is right
-			PLAYER_LIST[currentPlayer.id].x += playerSpeed;
-		if (currentPlayer.keysDown[38]) //38 is up
-			PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
-		if (currentPlayer.keysDown[40]) //40 is down
-			PLAYER_LIST[currentPlayer.id].y += playerSpeed;
+		var currentSocket = SOCKET_LIST[i];
+		var currentPlayer = PLAYER_LIST[currentSocket.id];
+		if (!(currentPlayer.isKiller && countingDown)) {
+			if (currentSocket.keysDown[37]) {//37 is left
+				PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
+			}
+			if (currentSocket.keysDown[39]) {//39 is right
+				PLAYER_LIST[currentPlayer.id].x += playerSpeed;
+			}
+			if (currentSocket.keysDown[38]) {//38 is up
+				PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
+			}
+			if (currentSocket.keysDown[40]) {//40 is down
+				PLAYER_LIST[currentPlayer.id].y += playerSpeed;
+			}
+		}
 	}
 
 	for (var i in SOCKET_LIST) {

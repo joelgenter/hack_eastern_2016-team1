@@ -34,6 +34,11 @@ var shapeCollisionHappened = false;
 var killerCollisionHappened = false;
 var killer = undefined;
 var matchTime = 30; //seconds
+var startShape = {
+	exists: false,
+	x: null,
+	y: null
+};
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -92,22 +97,22 @@ setInterval(function() {
 
 	//start the game if there are three or more players and game is not started
 	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
-		PLAYER_LIST.startShape.exists = true;
-		PLAYER_LIST.startShape.x = Math.floor((Math.random() * 500) + 1);
-		PLAYER_LIST.startShape.y = Math.floor((Math.random() * 500) + 1);
+		startShape.exists = true;
+		startShape.x = Math.floor((Math.random() * 500) + 1);
+		startShape.y = Math.floor((Math.random() * 500) + 1);
 
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
-			currentPlayer.emit('gameShapeCreated', PLAYER_LIST.startShape);
+			currentPlayer.emit('gameShapeCreated', startShape);
 		}
 		gameIsStarted = true;
 	}
 
 	//checking for collision iwth start shape
-	if (gameIsStarted && PLAYER_LIST.startShape.exists) {
+	if (gameIsStarted && startShape.exists) {
 		for (var i in PLAYER_LIST) {
 			var currentPlayer = PLAYER_LIST[i];
-			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - PLAYER_LIST.startShape.x), 2) + Math.pow((currentPlayer.y - PLAYER_LIST.startShape.y), 2));
+			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
@@ -119,10 +124,10 @@ setInterval(function() {
 
 		//send out the collision to all players
 		if (shapeCollisionHappened) {
-			PLAYER_LIST.startShape.exists = false;
+			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
-				//if (PLAYER_LIST.startShape.exists)			//startShape.exists is set to false a few lines above
+				//if (startShape.exists)			//startShape.exists is set to false a few lines above
 				currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}

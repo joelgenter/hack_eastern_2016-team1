@@ -91,7 +91,7 @@ setInterval(function() {
 	*/
 
 	//start the game if there are three or more players and game is not started
-	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
+	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
 		startShape = {
 			exists: true,
 			x: Math.floor((Math.random() * 500) + 1),
@@ -123,7 +123,7 @@ setInterval(function() {
 			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
-				if (startShape.exists)
+				//if (startShape.exists)			//startShape.exists is set to false a few lines above
 					currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}
@@ -132,7 +132,7 @@ setInterval(function() {
 				setTimeout(function() {
 					killer.color = "#0000FF";
 					var lowestDeaths = Number.MAX_VALUE;
-					var lowestPlayer = undefined
+					var lowestPlayer = undefined;
 					for (var i in PLAYER_LIST) {
 						var currentPlayer = PLAYER_LIST[i];
 						if (!currentPlayer.isKiller) {
@@ -146,12 +146,8 @@ setInterval(function() {
 					killer = lowestPlayer;
 					killer.isKiller = true;	
 					killer.color = "#FF0000";
-					shapeCollisionHappened = true; 
-					countingDown = true;	
-				}, matchTime * 1000);
+				}, 5000); //matchTime * 1000);
 			}, 10000);
-			if (!countingDown)
-				shapeCollisionHappened = false;
 		}
 	}
 

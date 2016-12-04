@@ -110,6 +110,7 @@ setInterval(function() {
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
+				killer = currentPlayer;
 				currentPlayer.color = "#FF0000";
 				break;
 			}
@@ -134,14 +135,12 @@ setInterval(function() {
 	* killer collision with player
 	*/
 	if (gameIsStarted && !countingDown && killer != undefined) {
-		console.log('inside if statement');
 		for (var i in PLAYER_LIST) {
 			var currentPlayer = PLAYER_LIST[i];
 			var currentSocket = SOCKET_LIST[currentPlayer.id];
 			if (!currentPlayer.isKiller) {
 				var distanceFromKiller = Math.sqrt(Math.pow((currentPlayer.x - killer.x), 2) + Math.pow((currentPlayer.y - killer.y), 2));
 				if (distanceFromKiller <= (2 * radiusOfPlayer)) {
-					console.log('collision');
 					killerCollisionHappened = true;
 					currentPlayer.deaths++;
 					currentPlayer.x = Math.floor((Math.random() * 500) + 1);

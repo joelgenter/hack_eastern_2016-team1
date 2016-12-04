@@ -61,11 +61,29 @@
                     for (var i in players) {
                         ctx.fillStyle = "#FF0000";
                         //ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
-
-                        ctx.fillRect(players[i].x,players[i].y,50,50);
+                        ctx.beginPath();
+                        ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
+                        ctx.fill();
+                        // ctx.fillRect(players[i].x,players[i].y,50,50);
                     }
                     }
                 );
+
+                var gameShape;
+                // this renders the game start thing
+                socket.on("gameShapeCreated", function(shape){
+                    renderStack.push( function () {
+                        ctx.fillStyle = "#0000FF";
+                        ctx.beginPath();
+                        ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
+                        ctx.fill();
+                        gameShape = renderStack.length -1;
+                    });
+                });
+
+                socket.on("startShapeCollision", function () {
+                    delete renderStack[gameShape];
+                });
 
                 function getMousePos(canvas, evt) {
                     players[playerId].mousex = evt.clientX;

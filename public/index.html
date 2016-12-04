@@ -7,8 +7,10 @@
         <script type="text/javascript">
             
             var playerName = prompt("Please enter your name", "");
+            
 
             function init() {
+                var scoreboard = document.getElementById('scoreboard');
                 var socket = io(),
                     playerId,
                     players = {};
@@ -29,6 +31,11 @@
                 });
 
                 socket.on('gameStateChange', function(gameState) {
+                    scoreboard.innerHTML = "";
+                    for (var i in gameState) {
+                        var currentPlayer = gameState[i];
+                        scoreboard.innerHTML += currentPlayer.name + "'s deaths: " + currentPlayer.deaths + "<br>";
+                    }
                     players = gameState;
                     render(renderStack);
                  });
@@ -62,7 +69,7 @@
                 renderStack.push( function () {
                     for (var i in players) {
                         ctx.font = "20px Arial";
-                        ctx.fillStyle = "red";
+                        ctx.fillStyle = "white";
                         ctx.fillText(players[i].name, players[i].x - 20, players[i].y - 50);
                         ctx.beginPath();
                         ctx.fillStyle = players[i].color;
@@ -138,6 +145,7 @@
     </head>
     <body onload="init();">
         <canvas id="canvas" width="500" height="500"></canvas>
+        <div id="scoreboard"></div>
 
     </body>
 </html>

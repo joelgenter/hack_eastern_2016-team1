@@ -12,13 +12,7 @@
 	var io = require('socket.io')(server);
 }
 
-var PLAYER_LIST = {
-	startShape: {
-		exists: false,
-		x: null,
-		y: null
-	}
-};
+var PLAYER_LIST = {};
 var SOCKET_LIST = {};
 
 /*
@@ -29,16 +23,15 @@ var playerSpeed = 5;
 var gameIsStarted = false;
 var radiusOfPlayer = 40;
 var radiusOfStartShape = 40;
-var countingDown = false;
-var shapeCollisionHappened = false;
-var killerCollisionHappened = false;
-var killer = undefined;
-var matchTime = 30; //seconds
 var startShape = {
 	exists: false,
 	x: null,
 	y: null
 };
+var countingDown = false;
+var shapeCollisionHappened = false;
+var killerCollisionHappened = false;
+var killer;
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -47,13 +40,11 @@ io.on('connection', function(player) {
 
 	var thisPlayer = {
 		id: player.id,
-		name: "",
 		x: 200,
 		y: 200,
 		mousex: 500,
 		mousey: 300,
-		color: "#0000FF",
-		deaths: 0
+		color: "#0000FF"
 	};
 
 	player.keysDown = {
@@ -72,10 +63,7 @@ io.on('connection', function(player) {
 	//@param keysDown the object representing which keys are pressed down
 	player.on('keyInput', function(keysDown) {
 		SOCKET_LIST[player.id].keysDown = keysDown;
-	});
 
-	player.on('name', function(data) {
-		PLAYER_LIST[player.id].name = data.name;
 	});
 
 	player.on('disconnect', function() {
@@ -83,7 +71,6 @@ io.on('connection', function(player) {
 		delete SOCKET_LIST[player.id];
 		console.log('Player ' + player.id + ' disconnected');
 	});
-
 });
 
 /*
@@ -96,11 +83,12 @@ setInterval(function() {
 	*/
 
 	//start the game if there are three or more players and game is not started
-	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
-		startShape.exists = true;
-		startShape.x = Math.floor((Math.random() * 500) + 1);
-		startShape.y = Math.floor((Math.random() * 500) + 1);
-
+	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
+		startShape = {
+			exists: true,
+			x: Math.floor((Math.random() * 500) + 1),
+			y: Math.floor((Math.random() * 500) + 1)
+		};
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
 			currentPlayer.emit('gameShapeCreated', startShape);
@@ -116,7 +104,6 @@ setInterval(function() {
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
-				killer = currentPlayer;
 				currentPlayer.color = "#FF0000";
 				break;
 			}
@@ -127,89 +114,41 @@ setInterval(function() {
 			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
-				//if (startShape.exists)			//startShape.exists is set to false a few lines above
 				currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}
-			setTimeout(function() {
-				countingDown = false;
-				setInterval(function() {
-					killer.color = "#0000FF";
-					var lowestDeaths = Number.MAX_VALUE;
-					var lowestPlayer = undefined;
-					for (var i in PLAYER_LIST) {
-						var currentPlayer = PLAYER_LIST[i];
-						if (!currentPlayer.isKiller) {
-							if (currentPlayer.deaths < lowestDeaths) {
-								lowestPlayer = currentPlayer;
-								lowestDeaths = currentPlayer.deaths;
-							}
-							currentPlayer.deaths = 0;
-						}
-					}
-					killer.isKiller = false;	//reset original killer
-					killer = lowestPlayer;
-					killer.isKiller = true;
-					killer.color = "#FF0000";
-					shapeCollisionHappened = true;
-				}, matchTime * 1000);
-			}, 10000);
+			setTimeout(function() {countingDown = false;}, 10000);
 			shapeCollisionHappened = false;
 		}
 	}
 
-
 	/*
 	* killer collision with player
 	*/
-	if (gameIsStarted && !countingDown && killer != undefined) {
-		for (var i in PLAYER_LIST) {
-			var currentPlayer = PLAYER_LIST[i];
-			var currentSocket = SOCKET_LIST[currentPlayer.id];
-			if (!currentPlayer.isKiller) {
-				var distanceFromKiller = Math.sqrt(Math.pow((currentPlayer.x - killer.x), 2) + Math.pow((currentPlayer.y - killer.y), 2));
-				if (distanceFromKiller <= (2 * radiusOfPlayer)) {
-					killerCollisionHappened = true;
-					currentPlayer.deaths++;
-					currentPlayer.x = Math.floor((Math.random() * 500) + 1);
-					currentPlayer.y = Math.floor((Math.random() * 500) + 1);
-					break;
-				}
-			}
-		}
+
+	if (gameIsStarted && !countingDown) {
+
 	}
 
 
 	/*
 	* general gamestate managing
-	*/
+	*/ 
 	//change positions of players based on their keyDown object
 	for (var i in SOCKET_LIST) {
 		var currentSocket = SOCKET_LIST[i];
 		var currentPlayer = PLAYER_LIST[currentSocket.id];
 		if (!(currentPlayer.isKiller && countingDown)) {
 			if (currentSocket.keysDown[37]) {//37 is left
-				if(currentPlayer.isKiller)
-					PLAYER_LIST[currentPlayer.id].x -= playerSpeed + Math.random() * 10;
-				else
-					PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
+				PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
 			}
 			if (currentSocket.keysDown[39]) {//39 is right
-				if(currentPlayer.isKiller)
-					PLAYER_LIST[currentPlayer.id].x += playerSpeed + Math.random() * 10;
-				else
-					PLAYER_LIST[currentPlayer.id].x += playerSpeed;
+				PLAYER_LIST[currentPlayer.id].x += playerSpeed;
 			}
 			if (currentSocket.keysDown[38]) {//38 is up
-				if(currentPlayer.isKiller)
-					PLAYER_LIST[currentPlayer.id].y -= playerSpeed + Math.random() * 10;
-				else
 				PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
 			}
 			if (currentSocket.keysDown[40]) {//40 is down
-				if(currentPlayer.isKiller)
-					PLAYER_LIST[currentPlayer.id].y += playerSpeed + Math.random() * 10;
-				else
 				PLAYER_LIST[currentPlayer.id].y += playerSpeed;
 			}
 		}

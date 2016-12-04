@@ -8,23 +8,20 @@
             function init() {
                 var socket = io(),
                     playerId,
-                    stackLabel,
                     players = {};
 
-                    var promptData = prompt("Please enter four characters: ", "1234");
-                    promptData = promptData.slice(0,4);
-
-                    socket.emit("name", { name:promptData });
                 /*
                 * Server communication code
                 */
                 socket.on('initializePlayer', function(data) {
+                    console.log("data " + data);
                     playerId = data.id;
                     players[playerId] = data;
                     main();
                 });
 
                 socket.on('gameStateChange', function(gameState) {
+                    // console.log(gamestate);
                     players = gameState;
                     render(renderStack);
                  });
@@ -41,7 +38,7 @@
                 * UI interaction code
                 */
                 var renderStack = [],
-                canvas = document.getElementById("canvas"),
+                    canvas = document.getElementById("canvas"),
                     ctx = canvas.getContext("2d"),
                     mouse = {},
                     keysDown = {
@@ -50,52 +47,33 @@
                         39: false,
                         40: false
                     },
-                    then = Date.now();
+                    then = Date.now(),
+                    sendPlayerInterval;
 
 
                 // Render this player
                 renderStack.push( function () {
                     for (var i in players) {
-                        ctx.font = "10px Arial";
-                        ctx.fillText(players[i].name,players[i].x - 20,players[i].y - 50);
                         ctx.beginPath();
                         ctx.fillStyle = players[i].color;
-                        console.log(ctx.fillStyle);
-                        console.log(players[i].color);
                         ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
                         ctx.fill();
                     }
                     }
                 );
 
-                var gameShape;
                 // this renders the game start thing
                 socket.on("gameShapeCreated", function(shape){
-<<<<<<< HEAD
                     renderStack.push(function () {
-                        var img = new Image();
-                        img.src = "killer.png";
-                        ctx.drawImage(img,shape.x,shape.y);
-                        ctx.fill();
-                    })
-                    stackLabel = renderStack.length -1;
-                });
-
-                socket.on("startShapeCollision", function () {
-                    renderStack.splice(stackLabel, 1);
-=======
-                    renderStack.push( function () {
                         ctx.fillStyle = "0000FF";
                         ctx.beginPath();
                         ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
                         ctx.fill();
-                        gameShape = renderStack.length -1;
-                    });
+                    })
                 });
 
                 socket.on("startShapeCollision", function () {
-                    delete renderStack[gameShape];
->>>>>>> parent of 94bc4c2... some rendering fixes
+                    renderStack.pop();
                 });
 
                 addEventListener("keydown", function (key) {
@@ -134,12 +112,8 @@
                 function clear(context, color) {
                     var tmp = context.fillStyle;
                     context.fillStyle = color;
-                    var img = new Image();
-                    img.src = 'bg.png';
-                    var pat = context.createPattern(img,"repeat");
-                    context.rect(1,0,context.canvas.width,context.canvas.height);
-                    context.fillStyle = pat;
-                    context.fill();
+                    context.fillRect(1, 0, context.canvas.width, context.canvas.height);
+                    context.fillStyle = tmp;
                 }
 
 

@@ -31,7 +31,8 @@ var startShape = {
 var countingDown = false;
 var shapeCollisionHappened = false;
 var killerCollisionHappened = false;
-var killer;
+var killer = undefined;
+var matchTime = 30; //seconds
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -44,7 +45,8 @@ io.on('connection', function(player) {
 		y: 200,
 		mousex: 500,
 		mousey: 300,
-		color: "#0000FF"
+		color: "#0000FF",
+		deaths: 0
 	};
 
 	player.keysDown = {
@@ -104,6 +106,7 @@ setInterval(function() {
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
+				killer = currentPlayer;
 				currentPlayer.color = "#FF0000";
 				break;
 			}
@@ -114,20 +117,57 @@ setInterval(function() {
 			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
-				currentPlayer.emit('startShapeCollision', {});
+				if (startShape.exists)
+					currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}
-			setTimeout(function() {countingDown = false;}, 10000);
-			shapeCollisionHappened = false;
+			setTimeout(function() {
+				countingDown = false;
+				setTimeout(function() {
+					killer.color = "#0000FF";
+					var lowestDeaths = MAX_VALUE;
+					var lowestPlayer = undefined
+					for (var i in PLAYER_LIST) {
+						var currentPlayer = PLAYER_LIST[i];
+						if (!currentPlayer.isKiller) {
+							if (currentPlayer.deaths < lowestDeaths) {
+								lowestPlayer = currentPlayer;
+								lowestDeaths = currentPlayer.deaths;
+							}
+						}
+					}
+					killer.isKiller = false;	//reset original killer
+					killer = lowestPlayer;
+					killer.isKiller = true;	
+					killer.color = "#FF0000";
+					shapeCollisionHappened = true; 
+					countingDown = true;
+					console.log("match is over"); //testing		
+				}, matchTime * 1000);
+			}, 10000);
+			if (!countingDown)
+				shapeCollisionHappened = false;
 		}
 	}
 
 	/*
 	* killer collision with player
 	*/
-
-	if (gameIsStarted && !countingDown) {
-
+	if (gameIsStarted && !countingDown && killer != undefined) {
+		for (var i in PLAYER_LIST) {
+			var currentPlayer = PLAYER_LIST[i];
+			var currentSocket = SOCKET_LIST[currentPlayer.id];
+			if (!currentPlayer.isKiller) {
+				var distanceFromKiller = Math.sqrt(Math.pow((currentPlayer.x - killer.x), 2) + Math.pow((currentPlayer.y - killer.y), 2));
+				if (distanceFromKiller <= (2 * radiusOfPlayer)) {
+					killerCollisionHappened = true;
+					currentPlayer.deaths++;
+					currentPlayer.x = Math.floor((Math.random() * 500) + 1);
+					currentPlayer.y = Math.floor((Math.random() * 500) + 1);
+					break;
+				}
+			}
+		}
 	}
 
 

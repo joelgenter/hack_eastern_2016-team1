@@ -59,7 +59,7 @@
                 // Render this player
                 renderStack.push( function () {
                     for (var i in players) {
-                        ctx.fillStyle = "#FF0000";
+                        ctx.fillStyle = players[i].color;
                         //ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
                         ctx.beginPath();
                         ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
@@ -84,11 +84,6 @@
                 socket.on("startShapeCollision", function () {
                     delete renderStack[gameShape];
                 });
-
-                function getMousePos(canvas, evt) {
-                    players[playerId].mousex = evt.clientX;
-                    players[playerId].mousey = evt.clientY;
-                }
 
                 addEventListener("keydown", function (key) {
                 	if (

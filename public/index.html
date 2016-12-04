@@ -5,9 +5,9 @@
         <meta charset="utf-8">
         <title>Test Dots</title>
         <script type="text/javascript">
-            
+
             var playerName = prompt("Please enter your name", "");
-            
+
 
             function init() {
                 var scoreboard = document.getElementById('scoreboard');
@@ -18,7 +18,7 @@
                     socket.emit('name',{
                         name: playerName
                     });
-                
+
 
                 /*
                 * Server communication code
@@ -34,7 +34,7 @@
                     scoreboard.innerHTML = "";
                     for (var i in gameState) {
                         var currentPlayer = gameState[i];
-                        scoreboard.innerHTML += currentPlayer.name + "'s deaths: " + currentPlayer.deaths + "<br>";
+                        scoreboard.innerHTML += "<li>" + currentPlayer.name + "'s deaths: " + currentPlayer.deaths + "</li>";
                     }
                     players = gameState;
                     render(renderStack);
@@ -142,10 +142,46 @@
 
             }
         </script>
+        <style>
+          body{
+            font-family: Geneva;
+          }
+          #container{
+            text-align: center;
+            margin: auto;
+            width: 900px;
+            border: none;
+            padding: 10px;
+            overflow: hidden;
+          }
+          ul{
+            list-style-type: none;
+            display: inline-block;
+            text-align: left;
+            width: 200px;
+            float: left;
+            padding: 2px;
+          }
+          li{
+            padding: 3px;
+            display: inline-block;
+          }
+          li:nth-child(odd){
+            background-color: #eee;
+          }
+          canvas{
+            width: 500px;
+            display: inline-block;
+            float: left;
+            text-align: center;
+          }
+
+        </style>
     </head>
     <body onload="init();">
+      <div id="container">
         <canvas id="canvas" width="500" height="500"></canvas>
-        <div id="scoreboard"></div>
-
+        <ul id="scoreboard"></ul>
+      </div>
     </body>
 </html>

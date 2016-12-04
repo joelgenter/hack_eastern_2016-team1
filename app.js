@@ -133,7 +133,7 @@ setInterval(function() {
 			}
 			setTimeout(function() {
 				countingDown = false;
-				setTimeout(function() {
+				setInterval(function() {
 					killer.color = "#0000FF";
 					var lowestDeaths = Number.MAX_VALUE;
 					var lowestPlayer = undefined;
@@ -152,7 +152,7 @@ setInterval(function() {
 					killer.isKiller = true;
 					killer.color = "#FF0000";
 					shapeCollisionHappened = true;
-				}, 5000); //matchTime * 1000);
+				}, matchTime * 1000);
 			}, 10000);
 			shapeCollisionHappened = false;
 		}

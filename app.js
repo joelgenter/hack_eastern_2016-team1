@@ -32,18 +32,19 @@ io.on('connection', function(player) {
     console.log('User ' + player.id + ' connected');
 
 	for (var i in PLAYER_LIST) {
-		var player = PLAYER_LIST[i];
+		player = PLAYER_LIST[i];
 	}
 
 	player.on('sendPlayer', function(playerObj) {
 		for (var i in PLAYER_LIST) {
-			var player = PLAYER_LIST[i];
+			player = PLAYER_LIST[i];
 			player.emit('receivePlayer', playerObj);
 		}
 	});
 
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
+		console.log('User ' + player.id + ' disconnected');
 	});
 /*
 	player.on('increment', function(dataObjectFromClient) {
@@ -52,16 +53,3 @@ io.on('connection', function(player) {
 	});
 	*/
 });
-
-setInterval(function() {
-	for (var i in PLAYER_LIST) {
-		var player = PLAYER_LIST[i];
-		player.x++;
-		player.y++;
-		player.emit('newPosition', {
-			x: player.x,
-			y: player.y
-		});
-	}
-}, 1000/25);
-

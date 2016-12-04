@@ -6,7 +6,9 @@
         <title>Test Dots</title>
         <script type="text/javascript">
             function init() {
-                var socket = io();
+                var socket = io(),
+                    playerId,
+                    players = {};
 
                 /*
                 * Server communication code
@@ -18,9 +20,9 @@
                     main();
                 });
 
-                socket.on('gameStateChanged', function(players) {
-                    console.log(playerObj);
-                    players[playerObj.id] = playerObj;
+                socket.on('gameStateChange', function(players) {
+                    console.log(players);
+                    players[playerObj.id] = players;
                  });
 
                 /*
@@ -51,10 +53,8 @@
                         39: false,
                         40: false
                     },
-                    playerId = 2123,
                     then = Date.now(),
-                    sendPlayerInterval,
-                    players = {};
+                    sendPlayerInterval;
 
 
                 // Render this player

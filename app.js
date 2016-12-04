@@ -29,8 +29,9 @@ var startShape = {
 	y: null
 };
 var countingDown = false;
-var collisionHappened = false;
-
+var shapeCollisionHappened = false;
+var killerCollisionHappened = false;
+var killer;
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -43,7 +44,7 @@ io.on('connection', function(player) {
 		y: 200,
 		mousex: 500,
 		mousey: 300,
-		color: "0000FF"
+		color: "#0000FF"
 	};
 
 	player.keysDown = {
@@ -76,6 +77,12 @@ io.on('connection', function(player) {
 * game iteration
 */
 setInterval(function() {
+
+	/*
+	* start shape collision code
+	*/
+
+	//start the game if there are three or more players and game is not started
 	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
 		startShape = {
 			exists: true,
@@ -89,20 +96,21 @@ setInterval(function() {
 		gameIsStarted = true;
 	}
 
-	//checking for collision
+	//checking for collision iwth start shape
 	if (gameIsStarted && startShape.exists) {
 		for (var i in PLAYER_LIST) {
 			var currentPlayer = PLAYER_LIST[i];
 			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
-				collisionHappened = true;
+				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
-				currentPlayer.color = "FF0000";
+				currentPlayer.color = "#FF0000";
 				break;
 			}
 		}
 
-		if (collisionHappened) {
+		//send out the collision to all players
+		if (shapeCollisionHappened) {
 			startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
@@ -110,10 +118,23 @@ setInterval(function() {
 				countingDown = true;
 			}
 			setTimeout(function() {countingDown = false;}, 10000);
-			collisionHappened = false;
+			shapeCollisionHappened = false;
 		}
 	}
 
+	/*
+	* killer collision with player
+	*/
+
+	if (gameIsStarted && !countingDown) {
+
+	}
+
+
+	/*
+	* general gamestate managing
+	*/ 
+	//change positions of players based on their keyDown object
 	for (var i in SOCKET_LIST) {
 		var currentSocket = SOCKET_LIST[i];
 		var currentPlayer = PLAYER_LIST[currentSocket.id];
@@ -133,6 +154,7 @@ setInterval(function() {
 		}
 	}
 
+	//send out the gamestate to each player
 	for (var i in SOCKET_LIST) {
 		var currentPlayer = SOCKET_LIST[i];
 		currentPlayer.emit('gameStateChange', PLAYER_LIST);

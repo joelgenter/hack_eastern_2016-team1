@@ -41,6 +41,7 @@ io.on('connection', function(player) {
 
 	var thisPlayer = {
 		id: player.id,
+		name,
 		x: 200,
 		y: 200,
 		mousex: 500,
@@ -68,11 +69,16 @@ io.on('connection', function(player) {
 
 	});
 
+	player.on('name', function(data) {
+		PLAYER_LIST[player.id].name = data.name;
+	});
+
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
 		delete SOCKET_LIST[player.id];
 		console.log('Player ' + player.id + ' disconnected');
 	});
+
 });
 
 /*
@@ -125,7 +131,7 @@ setInterval(function() {
 				countingDown = false;
 				setTimeout(function() {
 					killer.color = "#0000FF";
-					var lowestDeaths = MAX_VALUE;
+					var lowestDeaths = Number.MAX_VALUE;
 					var lowestPlayer = undefined
 					for (var i in PLAYER_LIST) {
 						var currentPlayer = PLAYER_LIST[i];

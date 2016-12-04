@@ -44,6 +44,8 @@ io.on('connection', function(player) {
 		y: 200,
 		mousex: 500,
 		mousey: 300,
+		deaths: 0,
+		name,
 		color: "#0000FF"
 	};
 

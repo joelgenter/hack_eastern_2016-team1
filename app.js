@@ -56,4 +56,3 @@ setInterval(function() {
 		player.emit('gameStateChange', PLAYER_LIST);
 	}
 }, 40);
-

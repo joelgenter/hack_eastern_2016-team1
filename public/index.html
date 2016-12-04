@@ -11,13 +11,13 @@
                     ctx = canvas.getContext("2d"),
                     mouse = {},
                     keysDown = {},
-                    playerId,
+                    playerId = 2123,
                     then = Date.now(),
                     players = {
-                        P2123: {
+                        p2123: {
                             x: 23,
                             y: 45,
-                            id: 3452,
+                            id: 2123,
                             mousex: 99,
                             mousey: 102
                         },
@@ -25,11 +25,29 @@
                 var socket = io();
 
                 socket.on('initializePlayer', function(data) {
+                    console.log("data " + data);
                     playerId = data.id;
                     players[playerId] = data;
+
+                    // TODO: update otherPlayers
+                    var main = function () {
+                        socket.emit('sendPlayer', players[playerId]);
+                    	var now = Date.now();
+                    	var delta = now - then;
+
+                    	update(delta / 1000);
+                    	render(renderStack);
+
+                    	then = now;
+
+                    	requestAnimationFrame(main);
+                    };
+
+                    main();
                 })
 
                 socket.on('receivePlayer', function(playerObj) {
+                    console.log(playerObj);
                     players[playerObj.id] = playerObj;
                  });
 
@@ -83,21 +101,6 @@
                     context.fillStyle = tmp;
                 }
 
-                // TODO: update otherPlayers
-                var main = function () {
-                    socket.emit('sendPlayer', players[playerId]);
-                	var now = Date.now();
-                	var delta = now - then;
-
-                	update(delta / 1000);
-                	render(renderStack);
-
-                	then = now;
-
-                	requestAnimationFrame(main);
-                };
-
-                main();
 
             }
         </script>

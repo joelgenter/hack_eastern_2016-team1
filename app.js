@@ -42,15 +42,18 @@ io.on('connection', function(player) {
 			PLAYER_LIST[player.id].y -= playerSpeed;
 	});
 
-	setInterval(function() {
-		for (var i in PLAYER_LIST) {
-			var player = PLAYER_LIST[i];
-			player.emit('gameStateChange', PLAYER_LIST);
-		}
-	}, 40);
+
 
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
 		console.log('User ' + player.id + ' disconnected');
 	});
 });
+
+setInterval(function() {
+	for (var i in PLAYER_LIST) {
+		var player = PLAYER_LIST[i];
+		player.emit('gameStateChange', PLAYER_LIST);
+	}
+}, 40);
+

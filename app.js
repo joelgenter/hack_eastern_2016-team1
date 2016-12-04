@@ -20,6 +20,8 @@ var playerSpeed = 5;
 
 io.on('connection', function(player) {
 	player.id = Math.random();
+	console.log("player " + player.id + " has connected.");
+
 	var thisPlayer = {
 		id: player.id,
 		x: 200,
@@ -44,9 +46,8 @@ io.on('connection', function(player) {
 	//@param keysDown the object representing which keys are pressed down
 	player.on('keyInput', function(keysDown) {
 		SOCKET_LIST[player.id].keysDown = keysDown;
+
 	});
-
-
 
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
@@ -59,13 +60,13 @@ setInterval(function() {
 	for (var i in SOCKET_LIST) {
 		var currentPlayer = SOCKET_LIST[i];
 		if (currentPlayer.keysDown[37]) //37 is left
-			PLAYER_LIST[player.id].x -= playerSpeed;
+			PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
 		if (currentPlayer.keysDown[39]) //39 is right
-			PLAYER_LIST[player.id].x += playerSpeed;
+			PLAYER_LIST[currentPlayer.id].x += playerSpeed;
 		if (currentPlayer.keysDown[38]) //38 is up
-			PLAYER_LIST[player.id].y += playerSpeed;
+			PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
 		if (currentPlayer.keysDown[40]) //40 is down
-			PLAYER_LIST[player.id].y -= playerSpeed;
+			PLAYER_LIST[currentPlayer.id].y += playerSpeed;
 	}
 
 	for (var i in SOCKET_LIST) {

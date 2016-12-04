@@ -23,7 +23,6 @@
                 socket.on('gameStateChange', function(gameState) {
                     // console.log(gamestate);
                     players = gameState;
-                    console.log(players);
                  });
 
                 /*
@@ -61,7 +60,7 @@
                 // Render this player
                 renderStack.push( function () {
                         ctx.fillStyle = "#FF0000";
-                        ctx.fillRect(0,0,players[playerId].x,players[playerId].y);
+                        ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
                     }
                 );
 

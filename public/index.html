@@ -13,8 +13,9 @@
                     keysDown = {},
                     playerId = 2123,
                     then = Date.now(),
+                    sendPlayerInterval,
                     players = {};
-                    
+
                 var socket = io();
 
                 socket.on('initializePlayer', function(data) {
@@ -25,7 +26,6 @@
                 });
                 // TODO: update otherPlayers
                 var main = function () {
-                    socket.emit('sendPlayer', players[playerId]);
                     var now = Date.now();
                     var delta = now - then;
 
@@ -43,13 +43,14 @@
                  });
 
                 addEventListener("mousemove", function (event) {
+                    socket.emit('sendPlayer', players[playerId]);
                     var mousePos = getMousePos(ctx, event);
                 });
 
                 // Render this player
                 renderStack.push( function () {
                         ctx.fillStyle = "#FF0000";
-                        ctx.fillRect(0,0,150,75);
+                        ctx.fillRect(0,0,players[playerId].x,players[playerId].y);
                     }
                 );
 
@@ -59,11 +60,15 @@
                 }
 
                 addEventListener("keydown", function (e) {
+                    setInterval(function () {
+                        sendPlayerInterval = socket.emit('sendPlayer', players[playerId]);
+                    },40);
                 	keysDown[e.keyCode] = true;
                 });
 
                 addEventListener("keyup", function (e) {
                 	delete keysDown[e.keyCode];
+                    clearInterval(sendPlayerInterval);
                 });
 
                 // Update game objects

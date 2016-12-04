@@ -15,8 +15,13 @@
 var PLAYER_LIST = {};
 var SOCKET_LIST = {};
 
+/*
+* game variables
+*/
 //represents how far a player will move every time game data is sent
 var playerSpeed = 5;
+var gameIsStarted = false;
+
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -57,6 +62,16 @@ io.on('connection', function(player) {
 });
 
 setInterval(function() {
+	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
+		for (var i in SOCKET_LIST) {
+			var currentPlayer = SOCKET_LIST[i];
+			currentPlayer.emit('gameShapeCreated', {
+				x: Math.floor((Math.random() * 500) + 1),
+				y: Math.floor((Math.random() * 500) + 1)
+			});
+		}
+	}
+
 	for (var i in SOCKET_LIST) {
 		var currentPlayer = SOCKET_LIST[i];
 		if (currentPlayer.keysDown[37]) //37 is left
@@ -74,3 +89,15 @@ setInterval(function() {
 		currentPlayer.emit('gameStateChange', PLAYER_LIST);
 	}
 }, 40);
+
+
+/*
+* helper functions
+*/
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};

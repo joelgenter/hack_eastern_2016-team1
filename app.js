@@ -177,22 +177,34 @@ setInterval(function() {
 
 	/*
 	* general gamestate managing
-	*/ 
+	*/
 	//change positions of players based on their keyDown object
 	for (var i in SOCKET_LIST) {
 		var currentSocket = SOCKET_LIST[i];
 		var currentPlayer = PLAYER_LIST[currentSocket.id];
 		if (!(currentPlayer.isKiller && countingDown)) {
 			if (currentSocket.keysDown[37]) {//37 is left
-				PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
+				if(currentPlayer.isKiller)
+					PLAYER_LIST[currentPlayer.id].x -= playerSpeed + Math.random() * 10;
+				else
+					PLAYER_LIST[currentPlayer.id].x -= playerSpeed;
 			}
 			if (currentSocket.keysDown[39]) {//39 is right
+				if(currentPlayer.isKiller)
+					PLAYER_LIST[currentPlayer.id].x += playerSpeed + Math.random() * 10;
+				else
 				PLAYER_LIST[currentPlayer.id].x += playerSpeed;
 			}
 			if (currentSocket.keysDown[38]) {//38 is up
+				if(currentPlayer.isKiller)
+					PLAYER_LIST[currentPlayer.id].y -= playerSpeed + Math.random() * 10;
+				else
 				PLAYER_LIST[currentPlayer.id].y -= playerSpeed;
 			}
 			if (currentSocket.keysDown[40]) {//40 is down
+				if(currentPlayer.isKiller)
+					PLAYER_LIST[currentPlayer.id].y += playerSpeed + Math.random() * 10;
+				else
 				PLAYER_LIST[currentPlayer.id].y += playerSpeed;
 			}
 		}

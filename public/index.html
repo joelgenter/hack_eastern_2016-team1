@@ -73,7 +73,6 @@
                         var img = new Image();
                         img.src = "killer.png";
                         ctx.drawImage(img,shape.x,shape.y);
-                        ctx.fillStyle = "00FF00";
                         ctx.fill();
                     })
                     stackLabel = renderStack.length -1;
@@ -123,7 +122,6 @@
                     img.src = 'bg.png';
                     var pat = context.createPattern(img,"repeat");
                     context.rect(1,0,context.canvas.width,context.canvas.height);
-                    //context.fillRect(1, 0, context.canvas.width, context.canvas.height);
                     context.fillStyle = pat;
                     context.fill();
                 }

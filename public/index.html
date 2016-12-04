@@ -69,21 +69,21 @@
                     }
                 );
 
-                // var gameShape;
-                // // this renders the game start thing
-                // socket.on("gameShapeCreated", function(shape){
-                //     renderStack.push( function () {
-                //         ctx.fillStyle = "#0000FF";
-                //         ctx.beginPath();
-                //         ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
-                //         ctx.fill();
-                //         gameShape = renderStack.length -1;
-                //     });
-                // });
-                //
-                // socket.on("startShapeCollision", function () {
-                //     delete renderStack[gameShape];
-                // });
+                var gameShape;
+                // this renders the game start thing
+                socket.on("gameShapeCreated", function(shape){
+                    renderStack.push( function () {
+                        ctx.fillStyle = "#0000FF";
+                        ctx.beginPath();
+                        ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
+                        ctx.fill();
+                        gameShape = renderStack.length -1;
+                    });
+                });
+
+                socket.on("startShapeCollision", function () {
+                    delete renderStack[gameShape];
+                });
 
                 function getMousePos(canvas, evt) {
                     players[playerId].mousex = evt.clientX;

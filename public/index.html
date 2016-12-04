@@ -20,9 +20,10 @@
                     main();
                 });
 
-                socket.on('gameStateChange', function(players) {
+                socket.on('gameStateChange', function(gameState) {
+                    // console.log(gamestate);
+                    players = gameState;
                     console.log(players);
-                    players[playerObj.id] = players;
                  });
 
                 /*

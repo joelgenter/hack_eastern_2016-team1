@@ -10,6 +10,10 @@
                     playerId,
                     players = {};
 
+                    var propmtData = prompt("Please enter four characters: ", "1234");
+                    promptData = propmtData.slice(0,4);
+
+                    socket.emit("name", propmtData);
                 /*
                 * Server communication code
                 */
@@ -21,7 +25,6 @@
                 });
 
                 socket.on('gameStateChange', function(gameState) {
-                    // console.log(gamestate);
                     players = gameState;
                     render(renderStack);
                  });

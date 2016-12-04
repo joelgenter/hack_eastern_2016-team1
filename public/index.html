@@ -8,6 +8,7 @@
             function init() {
                 var socket = io(),
                     playerId,
+                    stackLabel,
                     players = {};
 
                     var propmtData = prompt("Please enter four characters: ", "1234");
@@ -68,23 +69,17 @@
 
                 // this renders the game start thing
                 socket.on("gameShapeCreated", function(shape){
-                    console.log("wellshit");
                     renderStack.push(function () {
-                        ctx.fillStyle = "00FF00";
+                        ctx.fillStyle = "0000FF";
                         ctx.beginPath();
                         ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
                         ctx.fill();
-                        this.shape = true;
                     })
+                    stackLabel = renderStack.length -1;
                 });
 
                 socket.on("startShapeCollision", function () {
-                    console.log("OMG");
-                    for (var i in renderStack) {
-                        if (renderStack[i].shape === true) {
-                            delete renderStack[i]; // remove one value
-                        }
-                    }
+                    renderStack.splice(stackLabel, 1);
                 });
 
                 addEventListener("keydown", function (key) {

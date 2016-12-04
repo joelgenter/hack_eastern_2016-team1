@@ -18,7 +18,6 @@
                 * Server communication code
                 */
                 socket.on('initializePlayer', function(data) {
-                    console.log("data " + data);
                     playerId = data.id;
                     players[playerId] = data;
                     main();
@@ -69,16 +68,23 @@
 
                 // this renders the game start thing
                 socket.on("gameShapeCreated", function(shape){
+                    console.log("wellshit");
                     renderStack.push(function () {
-                        ctx.fillStyle = "0000FF";
+                        ctx.fillStyle = "00FF00";
                         ctx.beginPath();
                         ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
                         ctx.fill();
+                        this.shape = true;
                     })
                 });
 
                 socket.on("startShapeCollision", function () {
-                    renderStack.pop();
+                    console.log("OMG");
+                    for (var i in renderStack) {
+                        if (renderStack[i].shape === true) {
+                            delete renderStack[i]; // remove one value
+                        }
+                    }
                 });
 
                 addEventListener("keydown", function (key) {

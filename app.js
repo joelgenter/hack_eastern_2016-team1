@@ -21,20 +21,25 @@ io.on('connection', function(player) {
 		mousex: 500,
 		mousey: 300
 	};
-	console.log(thisPlayer);
 	player.emit('initializePlayer', thisPlayer);
-	/*
-	player.x = 0;
-	player.y = 0;
-	*/
+	console.log("Player " + thisPlayer)
+
 	PLAYER_LIST[player.id] = player;
 
-    console.log('User ' + player.id + ' connected');
+	/*
+	* testing new 
+	*/
+	player.on('playerTransfer', function(playerObj) {
+		for (var i in PLAYER_LIST) {
+			var player = PLAYER_LIST[i];
+			player.emit('playerTransfer', playerObj);
+		}
+	})
 
-	for (var i in PLAYER_LIST) {
-		var player = PLAYER_LIST[i];
-	}
 
+	/*
+	* testing new 
+	*/
 	player.on('sendPlayer', function(playerObj) {
 		for (var i in PLAYER_LIST) {
 			var player = PLAYER_LIST[i];
@@ -45,23 +50,5 @@ io.on('connection', function(player) {
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
 	});
-/*
-	player.on('increment', function(dataObjectFromClient) {
-		dataObjectFromClient.theValue++;
-		player.emit('serverHasResponded', dataObjectFromClient);
-	});
-	*/
 });
-
-setInterval(function() {
-	for (var i in PLAYER_LIST) {
-		var player = PLAYER_LIST[i];
-		player.x++;
-		player.y++;
-		player.emit('newPosition', {
-			x: player.x,
-			y: player.y
-		});
-	}
-}, 1000/25);
 

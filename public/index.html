@@ -28,14 +28,7 @@
                 */
                 // TODO: update otherPlayers
                 var main = function () {
-                    socket.emit('playerTransfer', players[playerId]);
-                    var now = Date.now();
-                    var delta = now - then;
-
-                    update(delta / 1000);
                     render(renderStack);
-
-                    then = now;
 
                     requestAnimationFrame(main);
                 };

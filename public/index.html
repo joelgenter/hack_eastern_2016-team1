@@ -69,6 +69,22 @@
                     }
                 );
 
+                var gameShape;
+                // this renders the game start thing
+                socket.on("gameShapeCreated", function(shape){
+                    renderStack.push( function () {
+                        ctx.fillStyle = "#0000FF";
+                        ctx.beginPath();
+                        ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
+                        ctx.fill();
+                        gameShape = renderStack.length -1;
+                    });
+                });
+
+                socket.on("startShapeCollision", function () {
+                    delete renderStack[gameShape];
+                });
+
                 function getMousePos(canvas, evt) {
                     players[playerId].mousex = evt.clientX;
                     players[playerId].mousey = evt.clientY;

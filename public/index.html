@@ -13,7 +13,7 @@
                     var propmtData = prompt("Please enter four characters: ", "1234");
                     promptData = propmtData.slice(0,4);
 
-                    socket.emit("name", propmtData);
+                    socket.emit("name", { name:propmtData });
                 /*
                 * Server communication code
                 */
@@ -57,6 +57,8 @@
                 // Render this player
                 renderStack.push( function () {
                     for (var i in players) {
+                        ctx.font = "10px Arial";
+                        ctx.fillText(players[i].name,players[i].x - 20,players[i].y - 50);
                         ctx.beginPath();
                         ctx.fillStyle = players[i].color;
                         ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);

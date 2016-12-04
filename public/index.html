@@ -18,7 +18,7 @@
                     main();
                 });
 
-                socket.on('receiveGameState', function(players) {
+                socket.on('gameStateChanged', function(players) {
                     console.log(playerObj);
                     players[playerObj.id] = playerObj;
                  });
@@ -78,7 +78,7 @@
                     ) {
                         if (keysDown[key.keyCode] != true) {
                             keysDown[key.keyCode] = true;
-                            socket.emit('sendKeyInput', keysDown);
+                            socket.emit('keyInput', keysDown);
                         }
                     }
                 });
@@ -91,7 +91,7 @@
                         key.keyCode == 39
                     ) {
                         keysDown[key.keyCode] = false;
-                        socket.emit('sendKeyInput', keysDown);
+                        socket.emit('keyInput', keysDown);
                     }
                 });
 

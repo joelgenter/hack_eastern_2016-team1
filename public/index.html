@@ -75,7 +75,7 @@
                     renderStack.push( function () {
                         ctx.fillStyle = "#0000FF";
                         ctx.beginPath();
-                        ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
+                        ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
                         ctx.fill();
                         gameShape = renderStack.length -1;
                     });

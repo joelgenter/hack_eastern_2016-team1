@@ -23,6 +23,7 @@
                 socket.on('gameStateChange', function(gameState) {
                     // console.log(gamestate);
                     players = gameState;
+                    render(renderStack);
                  });
 
                 /*
@@ -30,8 +31,6 @@
                 */
                 // TODO: update otherPlayers
                 var main = function () {
-                    render(renderStack);
-
                     requestAnimationFrame(main);
                 };
 
@@ -59,8 +58,12 @@
 
                 // Render this player
                 renderStack.push( function () {
+                    for (var i in players) {
                         ctx.fillStyle = "#FF0000";
-                        ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
+                        //ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
+
+                        ctx.fillRect(players[i].x,players[i].y,50,50);
+                    }
                     }
                 );
 

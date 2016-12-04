@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+        <meta charset="utf-8">
+        <title>Dots</title>
+    </head>
+    <body onload="">
+        <canvas id="canvas" width="500" height="500" style="border: 1px solid; width: 500px; height: 500px;"></canvas>
+
+        <script type="text/javascript">
+            /*
+            * declare variables
+            */
+            var socket = io(),
+                playerId,
+                PLAYER_LIST = {},
+                canvas = document.getElementById('canvas'),
+                ctx = canvas.getContext('2d');
+
+            ctx.fillRect(10, 10, 100, 100);
+
+            socket.on('initializePlayer', function(data) {
+                playerId = data.id;
+                PLAYER_LIST[playerId] = data;       //i think this is done in the gameStateChange
+                main();
+            });
+
+            socket.on('gameStateChange', function(gameState) {
+                PLAYER_LIST = gameState;
+                render(renderStack);
+                });
+
+            socket.on("gameShapeCreated", function(shape){
+            });
+
+            socket.on("startShapeCollision", function () {
+            });
+
+            /*
+            * event listeners
+            */
+            {
+                addEventListener("keydown", function (key) {
+                    if (
+                        key.keyCode == 38 ||
+                        key.keyCode == 40 ||
+                        key.keyCode == 37 ||
+                        key.keyCode == 39
+                    ) {
+                        if (keysDown[key.keyCode] != true) {
+                            keysDown[key.keyCode] = true;
+                            socket.emit('keyInput', keysDown);
+                        }
+                    }
+                });
+
+                addEventListener("keyup", function (key) {
+                    if (
+                        key.keyCode == 38 ||
+                        key.keyCode == 40 ||
+                        key.keyCode == 37 ||
+                        key.keyCode == 39
+                    ) {
+                        keysDown[key.keyCode] = false;
+                        socket.emit('keyInput', keysDown);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

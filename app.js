@@ -12,7 +12,13 @@
 	var io = require('socket.io')(server);
 }
 
-var PLAYER_LIST = {};
+var PLAYER_LIST = {
+	startShape: {
+		exists: false,
+		x: null,
+		y: null
+	}
+};
 var SOCKET_LIST = {};
 
 /*
@@ -23,11 +29,6 @@ var playerSpeed = 5;
 var gameIsStarted = false;
 var radiusOfPlayer = 40;
 var radiusOfStartShape = 40;
-var startShape = {
-	exists: false,
-	x: null,
-	y: null
-};
 var countingDown = false;
 var shapeCollisionHappened = false;
 var killerCollisionHappened = false;
@@ -91,11 +92,10 @@ setInterval(function() {
 
 	//start the game if there are three or more players and game is not started
 	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) {
-		startShape = {
-			exists: true,
-			x: Math.floor((Math.random() * 500) + 1),
-			y: Math.floor((Math.random() * 500) + 1)
-		};
+		PLAYER_LIST.startShape.exists = true;
+		PLAYER_LIST.startShape.x = Math.floor((Math.random() * 500) + 1);
+		PLAYER_LIST.startShape.y = Math.floor((Math.random() * 500) + 1);
+
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
 			currentPlayer.emit('gameShapeCreated', startShape);

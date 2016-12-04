@@ -258,20 +258,11 @@ Object.size = function(obj) {
 
 function resetKiller() {
 	if (Object.size(PLAYER_LIST) > 1) {
+		var randomNumber = Math.floor((Math.random() * Object.size(PLAYER_LIST)) + 1);
+		var keys = Object.keys(PLAYER_LIST);
 		killer.color = "#0000FF";
-		var lowestDeaths = Number.MAX_VALUE;
-		var lowestPlayer = undefined;
-		for (var i in PLAYER_LIST) {
-			var currentPlayer = PLAYER_LIST[i];
-			if (!currentPlayer.isKiller) {
-				if (currentPlayer.deaths < lowestDeaths) {
-					lowestPlayer = currentPlayer;
-					lowestDeaths = currentPlayer.deaths;
-				}
-			}
-		}
 		killer.isKiller = false;	//reset original killer
-		killer = lowestPlayer;
+		killer = PLAYER_LIST[keys[randomNumber - 1]];
 		killer.isKiller = true;
 		killer.color = "#FF0000";
 	}

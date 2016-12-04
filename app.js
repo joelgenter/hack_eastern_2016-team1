@@ -37,18 +37,22 @@ io.on('connection', function(player) {
 	})
 
 
+	for (var i in PLAYER_LIST) {
+		player = PLAYER_LIST[i];
+	}
+
 	/*
 	* testing new 
 	*/
 	player.on('sendPlayer', function(playerObj) {
 		for (var i in PLAYER_LIST) {
-			var player = PLAYER_LIST[i];
+			player = PLAYER_LIST[i];
 			player.emit('receivePlayer', playerObj);
 		}
 	});
 
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];
+		console.log('User ' + player.id + ' disconnected');
 	});
 });
-

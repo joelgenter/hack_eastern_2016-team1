@@ -2,33 +2,16 @@
 <html>
     <head>
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+        <script src="/js/server.js"></script>
+        <script src="/js/ui"></script>
         <meta charset="utf-8">
         <title>Test Dots</title>
         <script type="text/javascript">
             function init() {
-                var renderStack = [],
-                    canvas = document.getElementById("canvas"),
-                    ctx = canvas.getContext("2d"),
-                    mouse = {},
-                    keysDown = {
-                        37: false,
-                        38: false,
-                        39: false,
-                        40: false
-                    },
-                    playerId = 2123,
-                    then = Date.now(),
-                    players = {
-                        p2123: {
-                            x: 23,
-                            y: 45,
-                            id: 2123,
-                            mousex: 99,
-                            mousey: 102
-                        },
-                    };
-                var socket = io();
 
+                /*
+                * Server communication code
+                */
                 socket.on('initializePlayer', function(data) {
                     console.log("data " + data);
                     playerId = data.id;
@@ -36,6 +19,14 @@
                     main();
                 });
 
+                socket.on('receiveGameState', function(players) {
+                    console.log(playerObj);
+                    players[playerObj.id] = playerObj;
+                 });
+
+                /*
+                * Gray area
+                */
                 // TODO: update otherPlayers
                 var main = function () {
                     socket.emit('playerTransfer', players[playerId]);
@@ -50,16 +41,41 @@
                     requestAnimationFrame(main);
                 };
 
-                socket.on('playerTransfer', function(playerObj) {
-                    players[playerObj.id] = playerObj;
-                 });
-
                 addEventListener("mousemove", function (event) {
+                    socket.emit('sendPlayer', players[playerId]);
                     var mousePos = getMousePos(ctx, event);
                 });
 
+                /*
+                * UI interaction code
+                */
+                var renderStack = [],
+                    canvas = document.getElementById("canvas"),
+                    ctx = canvas.getContext("2d"),
+                    mouse = {},
+                    keysDown = {
+                        37: false,
+                        38: false,
+                        39: false,
+                        40: false
+                    },
+                    playerId = 2123,
+                    then = Date.now(),
+                    sendPlayerInterval,
+                    players = {};
+
+                var socket = io();
+
                 // Render this player
-                renderStack.push();
+                renderStack.push( function () {
+                        ctx.fillStyle = "#FF0000";
+                        ctx.fillRect(0,0,players[playerId].x,players[playerId].y);
+                    }
+                );
+
+                
+
+                
 
                 function getMousePos(canvas, evt) {
                     players[playerId].mousex = evt.clientX;
@@ -67,42 +83,30 @@
                 }
 
                 addEventListener("keydown", function (key) {
-                    if (
+                	if (
                         key.keyCode == 38 ||
                         key.keyCode == 40 ||
                         key.keyCode == 37 ||
                         key.keyCode == 39
                     ) {
-                        keysDown[key.keyCode] = true;
+                        if (keysDown[key.keyCode] != true) {
+                            keysDown[key.keyCode] = true;
+                            socket.emit('sendKeyInput', keysDown);
+                        }
                     }
                 });
 
                 addEventListener("keyup", function (key) {
-                    if (
+                	if (
                         key.keyCode == 38 ||
                         key.keyCode == 40 ||
                         key.keyCode == 37 ||
                         key.keyCode == 39
                     ) {
                         keysDown[key.keyCode] = false;
+                        socket.emit('sendKeyInput', keysDown);
                     }
                 });
-
-                // Update game objects
-                function update (modifier) {
-                	if (keysDown[38]) { // Player holding up
-                		players[playerId].y -= players[playerId].speed * modifier;
-                	}
-                	if (keysDown[40]) { // Player holding down
-                		players[playerId].y += players[playerId].speed * modifier;
-                	}
-                	if (keysDown[37]) { // Player holding left
-                		players[playerId].x -= players[playerId].speed * modifier;
-                	}
-                	if (keysDown[39]) { // Player holding right
-                		players[playerId].x += players[playerId].speed * modifier;
-                	}
-                };
 
                 function render (stack) {
                     clear(ctx,"#eee");

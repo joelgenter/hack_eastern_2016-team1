@@ -6,6 +6,7 @@
         <title>Test Dots</title>
         <script type="text/javascript">
             function init() {
+                var socket = io();
 
                 /*
                 * Server communication code
@@ -62,7 +63,6 @@
                     sendPlayerInterval,
                     players = {};
 
-                var socket = io();
 
                 // Render this player
                 renderStack.push( function () {

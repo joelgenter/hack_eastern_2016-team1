@@ -1,16 +1,20 @@
-var express = require('express');
-var app = express();
+{
+	var express = require('express');
+	var app = express();
 
-app.use(express.static(__dirname + '/public'));
+	app.use(express.static(__dirname + '/public'));
 
-var port = process.env.PORT || 8000;
-var server = app.listen(port, function(){
-	console.log('listening on', port);
-});
+	var port = process.env.PORT || 8000;
+	var server = app.listen(port, function(){
+		console.log('listening on', port);
+	});
 
-var io = require('socket.io')(server);
-
+	var io = require('socket.io')(server);
+}
 var PLAYER_LIST = {};
+
+//represents how far a player will move every time game data is sent
+var playerSpeed = 5;
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -21,35 +25,24 @@ io.on('connection', function(player) {
 		mousex: 500,
 		mousey: 300
 	};
-	player.emit('initializePlayer', thisPlayer);
-	console.log("Player " + thisPlayer)
 
+	player.emit('initializePlayer', thisPlayer);
 	PLAYER_LIST[player.id] = player;
 
-	/*
-	* testing new 
-	*/
-	player.on('playerTransfer', function(playerObj) {
-		for (var i in PLAYER_LIST) {
-			var player = PLAYER_LIST[i];
-			player.emit('playerTransfer', playerObj);
-		}
-	})
-
-
-	for (var i in PLAYER_LIST) {
-		player = PLAYER_LIST[i];
-	}
-
-	/*
-	* testing new 
-	*/
-	player.on('sendPlayer', function(playerObj) {
-		for (var i in PLAYER_LIST) {
-			player = PLAYER_LIST[i];
-			player.emit('receivePlayer', playerObj);
-		}
+	//handle the event of a user changing key input
+	//@param keysDown the object representing which keys are pressed down
+	player.on('keyInput', function(keysDown) {
+		if (keysDown[37]) //37 is left
+			PLAYER_LIST[player.id].x -= playerSpeed;
+		if (keysDown[39]) //39 is right
+			PLAYER_LIST[player.id].x += playerSpeed;
+		if (keysDown[38]) //38 is up
+			PLAYER_LIST[player.id].y += playerSpeed;
+		if (keysDown[40]) //40 is down
+			PLAYER_LIST[player.id].y -= playerSpeed;
 	});
+
+	player.on('gameStateChange', p)
 
 	player.on('disconnect', function() {
 		delete PLAYER_LIST[player.id];

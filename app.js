@@ -41,9 +41,9 @@ io.on('connection', function(player) {
 		if (keysDown[39]) //39 is right
 			PLAYER_LIST[player.id].x += playerSpeed;
 		if (keysDown[38]) //38 is up
-			PLAYER_LIST[player.id].y += playerSpeed;
-		if (keysDown[40]) //40 is down
 			PLAYER_LIST[player.id].y -= playerSpeed;
+		if (keysDown[40]) //40 is down
+			PLAYER_LIST[player.id].y += playerSpeed;
 	});
 
 

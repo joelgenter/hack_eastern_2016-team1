@@ -3,7 +3,7 @@
     <head>
         <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
         <meta charset="utf-8">
-        <title>Test Dots</title>
+        <title>Grassy Plains</title>
         <script type="text/javascript">
 
             var playerName = prompt("Please enter your name", "");
@@ -32,10 +32,17 @@
 
                 socket.on('gameStateChange', function(gameState) {
                     scoreboard.innerHTML = "";
+                    var lowestValue = Number.MAX_VALUES;
+                    var lowestPlayer;
                     for (var i in gameState) {
                         var currentPlayer = gameState[i];
+                        if (currentPlayer.deaths < lowestValue) {
+                            lowestValue = currentPlayer.deaths;
+                            lowestPlayer = currentPlayer
+                        }
                         scoreboard.innerHTML += "<li>" + currentPlayer.name + "'s deaths: " + currentPlayer.deaths + "</li>";
                     }
+                    
                     players = gameState;
                     render(renderStack);
                  });
@@ -182,6 +189,7 @@
       <div id="container">
         <canvas id="canvas" width="500" height="500"></canvas>
         <ul id="scoreboard"></ul>
+        <h1 id="winningBoard"></h1>
       </div>
     </body>
 </html>

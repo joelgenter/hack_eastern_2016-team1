@@ -44,10 +44,8 @@ io.on('connection', function(player) {
 
 	var thisPlayer = {
 		id: player.id,
-		x: 200,
-		y: 200,
-		mousex: 500,
-		mousey: 300,
+		x: Math.floor((Math.random() * 500) + 1),
+		y: Math.floor((Math.random() * 500) + 1),
 		deaths: 0,
 		name: "",
 		color: "#0000FF"
@@ -89,12 +87,14 @@ io.on('connection', function(player) {
 		}
 		delete PLAYER_LIST[player.id];
 		delete SOCKET_LIST[player.id];
-		
+		if (Object.size(PLAYER_LIST) <= 0) {
+			gameIsStarted = false;
+			clearInterval(resetKillerInterval);
+		}
 		console.log('Player ' + player.id + ' disconnected');
 	});
 });
 
-console.log("gameIsStarted: " + gameIsStarted + " killer: " + killer + " countingDown: " + countingDown);
 if (gameIsStarted && killer != undefined && !countingDown) {
 	console.log('im here');
 	resetKillerInterval = setInterval(function() {
@@ -166,6 +166,7 @@ setInterval(function() {
 			setTimeout(function() {
 				countingDown = false;
 				if (resetKillerInterval == undefined) {
+					console.log('set interval again');
 					resetKillerInterval = setInterval(resetKiller, 5000);
 				}
 			}, 5000);
@@ -258,20 +259,13 @@ Object.size = function(obj) {
 
 function resetKiller() {
 	if (Object.size(PLAYER_LIST) > 1) {
+		console.log('executing the reset');
+		var randomNumber = Math.floor((Math.random() * Object.size(PLAYER_LIST)) + 1);
+		var keys = Object.keys(PLAYER_LIST);
 		killer.color = "#0000FF";
-		var lowestDeaths = Number.MAX_VALUE;
-		var lowestPlayer = undefined;
-		for (var i in PLAYER_LIST) {
-			var currentPlayer = PLAYER_LIST[i];
-			if (!currentPlayer.isKiller) {
-				if (currentPlayer.deaths < lowestDeaths) {
-					lowestPlayer = currentPlayer;
-					lowestDeaths = currentPlayer.deaths;
-				}
-			}
-		}
+
 		killer.isKiller = false;	//reset original killer
-		killer = lowestPlayer;
+		killer = PLAYER_LIST[keys[randomNumber - 1]];
 		killer.isKiller = true;
 		killer.color = "#FF0000";
 	}

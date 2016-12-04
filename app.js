@@ -45,7 +45,7 @@ io.on('connection', function(player) {
 		mousex: 500,
 		mousey: 300,
 		deaths: 0,
-		name,
+		name: "",
 		color: "#0000FF"
 	};
 
@@ -121,9 +121,11 @@ setInterval(function() {
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
 				currentPlayer.emit('startShapeCollision', {});
-				countingDown = true;
 			}
-			setTimeout(function() {countingDown = false;}, 10000);
+			countingDown = true;
+			setTimeout(function() {
+				countingDown = false;
+			}, 10000);
 			shapeCollisionHappened = false;
 		}
 	}
@@ -131,9 +133,23 @@ setInterval(function() {
 	/*
 	* killer collision with player
 	*/
-
-	if (gameIsStarted && !countingDown) {
-
+	if (gameIsStarted && !countingDown && killer != undefined) {
+		console.log('inside if statement');
+		for (var i in PLAYER_LIST) {
+			var currentPlayer = PLAYER_LIST[i];
+			var currentSocket = SOCKET_LIST[currentPlayer.id];
+			if (!currentPlayer.isKiller) {
+				var distanceFromKiller = Math.sqrt(Math.pow((currentPlayer.x - killer.x), 2) + Math.pow((currentPlayer.y - killer.y), 2));
+				if (distanceFromKiller <= (2 * radiusOfPlayer)) {
+					console.log('collision');
+					killerCollisionHappened = true;
+					currentPlayer.deaths++;
+					currentPlayer.x = Math.floor((Math.random() * 500) + 1);
+					currentPlayer.y = Math.floor((Math.random() * 500) + 1);
+					break;
+				}
+			}
+		}
 	}
 
 

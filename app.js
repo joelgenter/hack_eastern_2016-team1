@@ -27,18 +27,22 @@ var startShape = {
 	x: null,
 	y: null
 };
+var matchStartCountDown;
+var countingDown = false;
 
 
 io.on('connection', function(player) {
 	player.id = Math.random();
 	console.log("player " + player.id + " has connected.");
+	player.isKiller = false;
 
 	var thisPlayer = {
 		id: player.id,
 		x: 200,
 		y: 200,
 		mousex: 500,
-		mousey: 300
+		mousey: 300,
+		color: "0000FF"
 	};
 
 	player.keysDown = {
@@ -72,12 +76,12 @@ io.on('connection', function(player) {
 */
 setInterval(function() {
 	if (Object.size(SOCKET_LIST) >= 3 && !gameIsStarted) { 
+		startShape = {
+			x: Math.floor((Math.random() * 500) + 1),
+			y: Math.floor((Math.random() * 500) + 1)
+		};
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
-			startShape = {
-				x: Math.floor((Math.random() * 500) + 1),
-				y: Math.floor((Math.random() * 500) + 1)
-			};
 			currentPlayer.emit('gameShapeCreated', startShape);
 		}
 		gameIsStarted = true;
@@ -90,6 +94,8 @@ setInterval(function() {
 			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				collisionHappened = true;
+				currentPlayer.isKiller = true;
+				currentPlayer.color = "FF0000";
 				break;
 			}
 		}
@@ -98,7 +104,12 @@ setInterval(function() {
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
 				currentPlayer.emit('startShapeCollision', {});
+				matchStartCountDown = setTimeout(function() {
+					
+				}, 10000);
+				countingDown = true;
 			}
+
 		}
 	}
 

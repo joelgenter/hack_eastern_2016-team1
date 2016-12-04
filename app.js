@@ -66,7 +66,6 @@ io.on('connection', function(player) {
 	//@param keysDown the object representing which keys are pressed down
 	player.on('keyInput', function(keysDown) {
 		SOCKET_LIST[player.id].keysDown = keysDown;
-
 	});
 
 	player.on('name', function(data) {
@@ -124,7 +123,7 @@ setInterval(function() {
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
 				//if (startShape.exists)			//startShape.exists is set to false a few lines above
-					currentPlayer.emit('startShapeCollision', {});
+				currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}
 			setTimeout(function() {
@@ -140,16 +139,20 @@ setInterval(function() {
 								lowestPlayer = currentPlayer;
 								lowestDeaths = currentPlayer.deaths;
 							}
+							currentPlayer.deaths = 0;
 						}
 					}
 					killer.isKiller = false;	//reset original killer
 					killer = lowestPlayer;
-					killer.isKiller = true;	
+					killer.isKiller = true;
 					killer.color = "#FF0000";
+					shapeCollisionHappened = true;
 				}, 5000); //matchTime * 1000);
 			}, 10000);
+			shapeCollisionHappened = false;
 		}
 	}
+
 
 	/*
 	* killer collision with player

@@ -70,9 +70,9 @@
                 // this renders the game start thing
                 socket.on("gameShapeCreated", function(shape){
                     renderStack.push(function () {
-                        ctx.fillStyle = "0000FF";
-                        ctx.beginPath();
-                        ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
+                        var img = new Image();
+                        img.src = "killer.png";
+                        ctx.drawImage(img,shape.x,shape.y);
                         ctx.fill();
                     })
                 });
@@ -117,8 +117,13 @@
                 function clear(context, color) {
                     var tmp = context.fillStyle;
                     context.fillStyle = color;
-                    context.fillRect(1, 0, context.canvas.width, context.canvas.height);
-                    context.fillStyle = tmp;
+                    var img = new Image();
+                    img.src = 'bg.png';
+                    var pat = context.createPattern(img,"repeat");
+                    context.rect(1,0,context.canvas.width,context.canvas.height);
+                    //context.fillRect(1, 0, context.canvas.width, context.canvas.height);
+                    context.fillStyle = pat;
+                    context.fill();
                 }
 
 

@@ -13,15 +13,8 @@
                     keysDown = {},
                     playerId = 2123,
                     then = Date.now(),
-                    players = {
-                        p2123: {
-                            x: 23,
-                            y: 45,
-                            id: 2123,
-                            mousex: 99,
-                            mousey: 102
-                        },
-                    };
+                    players = {};
+                    
                 var socket = io();
 
                 socket.on('initializePlayer', function(data) {
@@ -54,7 +47,11 @@
                 });
 
                 // Render this player
-                renderStack.push();
+                renderStack.push( function () {
+                        ctx.fillStyle = "#FF0000";
+                        ctx.fillRect(0,0,150,75);
+                    }
+                );
 
                 function getMousePos(canvas, evt) {
                     players[playerId].mousex = evt.clientX;

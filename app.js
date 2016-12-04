@@ -54,6 +54,10 @@ io.on('connection', function(player) {
 		40: false
 	};
 
+	if (startShape.exists) {
+		player.emit('gameShapeCreated', startShape);
+	}
+
 	player.emit('initializePlayer', thisPlayer);
 	SOCKET_LIST[player.id] = player;
 	PLAYER_LIST[player.id] = thisPlayer;

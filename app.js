@@ -9,7 +9,7 @@
 		console.log('listening on', port);
 	});
 
-	// var io = require('socket.io')(server);
+	var io = require('socket.io')(server);
 }
 
 var PLAYER_LIST = {};

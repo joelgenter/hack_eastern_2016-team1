@@ -54,12 +54,12 @@
                 // Render this player
                 renderStack.push( function () {
                     for (var i in players) {
-                        ctx.fillStyle = players[i].color;
-                        //ctx.fillRect(players[playerId].x,players[playerId].y,50,50);
                         ctx.beginPath();
+                        ctx.fillStyle = players[i].color;
+                        console.log(ctx.fillStyle);
+                        console.log(players[i].color);
                         ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);
                         ctx.fill();
-                        // ctx.fillRect(players[i].x,players[i].y,50,50);
                     }
                     }
                 );
@@ -68,7 +68,7 @@
                 // this renders the game start thing
                 socket.on("gameShapeCreated", function(shape){
                     renderStack.push( function () {
-                        ctx.fillStyle = "#0000FF";
+                        ctx.fillStyle = "0000FF";
                         ctx.beginPath();
                         ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
                         ctx.fill();

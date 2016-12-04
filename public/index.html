@@ -70,15 +70,9 @@
                 socket.on("gameShapeCreated", function(shape){
                     console.log("wellshit");
                     renderStack.push(function () {
-<<<<<<< HEAD
                         var img = new Image();
                         img.src = "killer.png";
                         ctx.drawImage(img,shape.x,shape.y);
-=======
-                        ctx.fillStyle = "00FF00";
-                        ctx.beginPath();
-                        ctx.arc(shape.x,shape.y,40,0,2*Math.PI);
->>>>>>> 36759cd7c81f33dd4f2268d960cf9ba676ade1fe
                         ctx.fill();
                         this.shape = true;
                     })
@@ -133,7 +127,6 @@
                     img.src = 'bg.png';
                     var pat = context.createPattern(img,"repeat");
                     context.rect(1,0,context.canvas.width,context.canvas.height);
-                    //context.fillRect(1, 0, context.canvas.width, context.canvas.height);
                     context.fillStyle = pat;
                     context.fill();
                 }

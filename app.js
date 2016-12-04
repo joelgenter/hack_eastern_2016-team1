@@ -98,16 +98,16 @@ setInterval(function() {
 
 		for (var i in SOCKET_LIST) {
 			var currentPlayer = SOCKET_LIST[i];
-			currentPlayer.emit('gameShapeCreated', startShape);
+			currentPlayer.emit('gameShapeCreated', PLAYER_LIST.startShape);
 		}
 		gameIsStarted = true;
 	}
 
 	//checking for collision iwth start shape
-	if (gameIsStarted && startShape.exists) {
+	if (gameIsStarted && PLAYER_LIST.startShape.exists) {
 		for (var i in PLAYER_LIST) {
 			var currentPlayer = PLAYER_LIST[i];
-			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
+			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - PLAYER_LIST.startShape.x), 2) + Math.pow((currentPlayer.y - PLAYER_LIST.startShape.y), 2));
 			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				shapeCollisionHappened = true;
 				currentPlayer.isKiller = true;
@@ -119,10 +119,10 @@ setInterval(function() {
 
 		//send out the collision to all players
 		if (shapeCollisionHappened) {
-			startShape.exists = false;
+			PLAYER_LIST.startShape.exists = false;
 			for (var i in SOCKET_LIST) {
 				var currentPlayer = SOCKET_LIST[i];
-				//if (startShape.exists)			//startShape.exists is set to false a few lines above
+				//if (PLAYER_LIST.startShape.exists)			//startShape.exists is set to false a few lines above
 				currentPlayer.emit('startShapeCollision', {});
 				countingDown = true;
 			}
@@ -193,7 +193,7 @@ setInterval(function() {
 				if(currentPlayer.isKiller)
 					PLAYER_LIST[currentPlayer.id].x += playerSpeed + Math.random() * 10;
 				else
-				PLAYER_LIST[currentPlayer.id].x += playerSpeed;
+					PLAYER_LIST[currentPlayer.id].x += playerSpeed;
 			}
 			if (currentSocket.keysDown[38]) {//38 is up
 				if(currentPlayer.isKiller)

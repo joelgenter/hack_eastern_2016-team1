@@ -88,7 +88,7 @@ setInterval(function() {
 			var collisionHappened = false;
 			var currentPlayer = PLAYER_LIST[i];
 			var distanceFromShape = Math.sqrt(Math.pow((currentPlayer.x - startShape.x), 2) + Math.pow((currentPlayer.y - startShape.y), 2));
-			if (distance <= (radiusOfStartShape + radiusOfPlayer)) {
+			if (distanceFromShape <= (radiusOfStartShape + radiusOfPlayer)) {
 				collisionHappened = true;
 				break;
 			}

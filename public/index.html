@@ -34,11 +34,6 @@
                     requestAnimationFrame(main);
                 };
 
-                addEventListener("mousemove", function (event) {
-                    socket.emit('sendPlayer', players[playerId]);
-                    var mousePos = getMousePos(ctx, event);
-                });
-
                 /*
                 * UI interaction code
                 */

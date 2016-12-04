@@ -60,9 +60,16 @@ io.on('connection', function(player) {
 		player.emit('gameShapeCreated', startShape);
 	}
 
+	
+
 	player.emit('initializePlayer', thisPlayer);
 	SOCKET_LIST[player.id] = player;
 	PLAYER_LIST[player.id] = thisPlayer;
+
+	player.on('name', function(data) {
+		PLAYER_LIST[player.id].name = data.name;
+	});
+
 	// SOCKET_LIST[player.id] = player;
 
 	//handle the event of a user changing key input

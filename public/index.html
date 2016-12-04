@@ -5,13 +5,18 @@
         <meta charset="utf-8">
         <title>Test Dots</title>
         <script type="text/javascript">
-
             
+            var playerName = prompt("Please enter your name", "");
 
             function init() {
                 var socket = io(),
                     playerId,
                     players = {};
+
+                    socket.emit('name',{
+                        name: playerName
+                    });
+                
 
                 /*
                 * Server communication code
@@ -24,7 +29,6 @@
                 });
 
                 socket.on('gameStateChange', function(gameState) {
-                    // console.log(gamestate);
                     players = gameState;
                     render(renderStack);
                  });
@@ -57,6 +61,9 @@
                 // Render this player
                 renderStack.push( function () {
                     for (var i in players) {
+                        ctx.font = "20px Arial";
+                        ctx.fillStyle = "red";
+                        ctx.fillText(players[i].name, players[i].x - 20, players[i].y - 50);
                         ctx.beginPath();
                         ctx.fillStyle = players[i].color;
                         ctx.arc(players[i].x,players[i].y,40,0,2*Math.PI);

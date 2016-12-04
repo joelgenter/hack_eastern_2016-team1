@@ -31,7 +31,11 @@ var startShape = {
 var countingDown = false;
 var shapeCollisionHappened = false;
 var killerCollisionHappened = false;
-var killer;
+var killer = undefined;
+var resetKillerInterval = undefined;
+
+
+
 
 io.on('connection', function(player) {
 	player.id = Math.random();
@@ -80,11 +84,39 @@ io.on('connection', function(player) {
 	});
 
 	player.on('disconnect', function() {
+		if (PLAYER_LIST[player.id].isKiller) {
+			resetKiller();
+		}
 		delete PLAYER_LIST[player.id];
 		delete SOCKET_LIST[player.id];
+		
 		console.log('Player ' + player.id + ' disconnected');
 	});
 });
+
+console.log("gameIsStarted: " + gameIsStarted + " killer: " + killer + " countingDown: " + countingDown);
+if (gameIsStarted && killer != undefined && !countingDown) {
+	console.log('im here');
+	resetKillerInterval = setInterval(function() {
+		killer.color = "#0000FF";
+		var lowestDeaths = Number.MAX_VALUE;
+		var lowestPlayer = undefined;
+		for (var i in PLAYER_LIST) {
+			var currentPlayer = PLAYER_LIST[i];
+			if (!currentPlayer.isKiller) {
+				if (currentPlayer.deaths < lowestDeaths) {
+					lowestPlayer = currentPlayer;
+					lowestDeaths = currentPlayer.deaths;
+				}
+				currentPlayer.deaths = 0;
+			}
+		}
+		killer.isKiller = false;	//reset original killer
+		killer = lowestPlayer;
+		killer.isKiller = true;
+		killer.color = "#FF0000";
+	}, 30000);
+}
 
 /*
 * game iteration
@@ -133,7 +165,10 @@ setInterval(function() {
 			countingDown = true;
 			setTimeout(function() {
 				countingDown = false;
-			}, 10000);
+				if (resetKillerInterval == undefined) {
+					resetKillerInterval = setInterval(resetKiller, 5000);
+				}
+			}, 5000);
 			shapeCollisionHappened = false;
 		}
 	}
@@ -167,6 +202,9 @@ setInterval(function() {
 		var currentSocket = SOCKET_LIST[i];
 		var currentPlayer = PLAYER_LIST[currentSocket.id];
 		if (!(currentPlayer.isKiller && countingDown)) {
+			if (currentPlayer.isKiller) {
+				playerSpeed = 10;
+			}
 			var newLocationValue = PLAYER_LIST[currentPlayer.id].x;
 			if (currentSocket.keysDown[37]) {//37 is left
 				newLocationValue -= playerSpeed;
@@ -195,6 +233,7 @@ setInterval(function() {
 				newLocationValue = newLocationValue % 500;
 
 			PLAYER_LIST[currentPlayer.id].y = newLocationValue;
+			playerSpeed = 5;
 		}
 	}
 
@@ -216,3 +255,24 @@ Object.size = function(obj) {
     }
     return size;
 };
+
+function resetKiller() {
+	if (Object.size(PLAYER_LIST) > 1) {
+		killer.color = "#0000FF";
+		var lowestDeaths = Number.MAX_VALUE;
+		var lowestPlayer = undefined;
+		for (var i in PLAYER_LIST) {
+			var currentPlayer = PLAYER_LIST[i];
+			if (!currentPlayer.isKiller) {
+				if (currentPlayer.deaths < lowestDeaths) {
+					lowestPlayer = currentPlayer;
+					lowestDeaths = currentPlayer.deaths;
+				}
+			}
+		}
+		killer.isKiller = false;	//reset original killer
+		killer = lowestPlayer;
+		killer.isKiller = true;
+		killer.color = "#FF0000";
+	}
+}

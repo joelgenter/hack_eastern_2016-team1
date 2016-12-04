@@ -41,7 +41,7 @@ io.on('connection', function(player) {
 
 	var thisPlayer = {
 		id: player.id,
-		name,
+		name: "",
 		x: 200,
 		y: 200,
 		mousex: 500,
@@ -147,8 +147,7 @@ setInterval(function() {
 					killer.isKiller = true;	
 					killer.color = "#FF0000";
 					shapeCollisionHappened = true; 
-					countingDown = true;
-					console.log("match is over"); //testing		
+					countingDown = true;	
 				}, matchTime * 1000);
 			}, 10000);
 			if (!countingDown)

@@ -14,8 +14,19 @@ var PLAYER_LIST = {};
 
 io.on('connection', function(player) {
 	player.id = Math.random();
+	var thisPlayer = {
+		id: player.id,
+		x: 200,
+		y: 200,
+		mousex: 500,
+		mousey: 300
+	};
+	console.log(thisPlayer);
+	player.emit('initializePlayer', thisPlayer);
+	/*
 	player.x = 0;
 	player.y = 0;
+	*/
 	PLAYER_LIST[player.id] = player;
 
     console.log('User ' + player.id + ' connected');
@@ -23,7 +34,6 @@ io.on('connection', function(player) {
 	for (var i in PLAYER_LIST) {
 		var player = PLAYER_LIST[i];
 	}
-
 
 	player.on('sendPlayer', function(playerObj) {
 		for (var i in PLAYER_LIST) {

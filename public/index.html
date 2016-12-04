@@ -28,23 +28,21 @@
                     console.log("data " + data);
                     playerId = data.id;
                     players[playerId] = data;
-
-                    // TODO: update otherPlayers
-                    var main = function () {
-                        socket.emit('sendPlayer', players[playerId]);
-                    	var now = Date.now();
-                    	var delta = now - then;
-
-                    	update(delta / 1000);
-                    	render(renderStack);
-
-                    	then = now;
-
-                    	requestAnimationFrame(main);
-                    };
-
                     main();
                 });
+                // TODO: update otherPlayers
+                var main = function () {
+                    socket.emit('sendPlayer', players[playerId]);
+                    var now = Date.now();
+                    var delta = now - then;
+
+                    update(delta / 1000);
+                    render(renderStack);
+
+                    then = now;
+
+                    requestAnimationFrame(main);
+                };
 
                 socket.on('receivePlayer', function(playerObj) {
                     console.log(playerObj);
